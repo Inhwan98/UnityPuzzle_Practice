@@ -37,7 +37,7 @@ namespace Ninez.Stage
         void BuildStage()
         {
             //1. Stage를 구성한다.
-            m_Stage = StageBuilder.BuildStage(nStage : 2);
+            m_Stage = StageBuilder.BuildStage(nStage : 1);
 
             //2. 생성한 stage 정보를 이용하여 씬을 구성한.
             m_Stage.ComposeStage(m_CellPrefab, m_BlockPrefab, m_Container);
