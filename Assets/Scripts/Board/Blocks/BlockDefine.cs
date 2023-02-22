@@ -18,5 +18,17 @@ namespace Ninez.Board
         BREED_2 = 2,
         BREED_3 = 3,
         BREED_4 = 4,
+        BREED_5 = 5,
+    }
+
+    static class BlockMethod
+    {
+        public static bool IsSafeEqual(this Block block, Block targetBlock)
+        {
+            if (block == null)
+                return false;
+
+            return block.IsEqual(targetBlock);
+        }
     }
 }
