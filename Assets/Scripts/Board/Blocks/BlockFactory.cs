@@ -12,7 +12,7 @@ namespace Ninez.Board
 
             //Set Breed
             if(blockType == BlockType.BASIC)
-                block.breed = (BlockBreed)UnityEngine.Random.Range(0, 6);
+                block.breed = (BlockBreed)UnityEngine.Random.Range(0, 5);
             else if(blockType == BlockType.EMPTY)
                 block.breed = BlockBreed.NA;
 

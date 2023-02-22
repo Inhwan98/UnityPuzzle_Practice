@@ -161,6 +161,7 @@ namespace Ninez.Board
         public bool EvalBlocksIfMatched(int nRow, int nCol, List<Block> matchedBlockList)
         {
             bool bFound = false;
+            bool isRight = false;
 
             Block baseBlock = m_Blocks[nRow, nCol];
             if (baseBlock == null)
@@ -194,6 +195,82 @@ namespace Ninez.Board
 
                 matchedBlockList.Insert(0, block);
             }
+
+            ///
+            /// 2 * 2 기능 추가
+            ///
+            if (matchedBlockList.Count == 2)
+            {
+                if (isRight)
+                {
+                    //1.1 위쪽 오른쪽 방향
+                    for (int i = nCol; i < m_nCol; i++)
+                    {
+                        if (nRow + 1 == m_nRow) break;
+
+                        block = m_Blocks[nRow + 1, i];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Add(block);
+                    }
+                }
+                else
+                {
+                    //1.2 위쪽 왼쪽 방향
+                    for (int i = nCol; i >= 0; i--)
+                    {
+                        if (nRow + 1 == m_nRow) break;
+                        block = m_Blocks[nRow + 1, i];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+                }
+                if (matchedBlockList.Count == 4)
+                {
+                    SetBlockStatusMatched(matchedBlockList, true);
+                    bFound = true;
+                    matchedBlockList.Clear();
+                    return bFound;
+                }
+                if (isRight)
+                {
+                    //1.1 아랫쪽 오른쪽 방향
+                    for (int i = nCol; i < m_nCol; i++)
+                    {
+                        if (nRow - 1 < 0) break;
+
+                        block = m_Blocks[nRow - 1, i];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Add(block);
+                    }
+                    //1.2 아랫쪽 왼쪽 방향
+                    for (int i = nCol; i >= 0; i--)
+                    {
+                        if (nRow - 1 < 0) break;
+
+                        block = m_Blocks[nRow - 1, i];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+
+                    if (matchedBlockList.Count == 4)
+                    {
+                        SetBlockStatusMatched(matchedBlockList, true);
+                        bFound = true;
+                        matchedBlockList.Clear();
+                        return bFound;
+                    }
+                }
+                matchedBlockList.Clear();
+            }
+
 
             //1.3 매치된 상태인지 판단한다
             //    기준 블럭(baseBlock)을 제외하고 좌우에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
