@@ -10,6 +10,7 @@ namespace InHwan.Scriptable
     {
         public float[] dropSpeed;
         public Sprite[] basicBlockSprites;
+        public Sprite munchkinBlockSprites;
         public Color[] blockColors;
         public GameObject explosion;
 

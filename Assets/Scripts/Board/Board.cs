@@ -202,6 +202,7 @@ namespace InHwan.Board
             ///
             if (matchedBlockList.Count == 2)
             {
+                //오른쪽으로 2개 맞다면...
                 if (isRight)
                 {
                     //1.1 위쪽 오른쪽 방향
@@ -228,7 +229,6 @@ namespace InHwan.Board
 
                         matchedBlockList.Insert(0, block);
                     }
-                    
                 }
                 if (matchedBlockList.Count == 4)
                 {
@@ -238,8 +238,14 @@ namespace InHwan.Board
                     return bFound;
                 }
                 //2023 / 02 / 23
-                matchedBlockList.RemoveAt(0);
+                if (isRight)
+                {
+                    matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                }
+                else
+                    matchedBlockList.RemoveAt(0);
 
+                //오른쪽으로 2개 맞다면...
                 if (isRight)
                 {
                     //1.1 아랫쪽 오른쪽 방향
@@ -253,6 +259,9 @@ namespace InHwan.Board
 
                         matchedBlockList.Add(block);
                     }
+                }
+                else
+                {
                     //1.2 아랫쪽 왼쪽 방향
                     for (int i = nCol; i >= 0; i--)
                     {
@@ -264,14 +273,14 @@ namespace InHwan.Board
 
                         matchedBlockList.Insert(0, block);
                     }
+                }
 
-                    if (matchedBlockList.Count == 4)
-                    {
-                        SetBlockStatusMatched(matchedBlockList, 2, true);
-                        bFound = true;
-                        matchedBlockList.Clear();
-                        return bFound;
-                    }
+                if (matchedBlockList.Count == 4)
+                {
+                    SetBlockStatusMatched(matchedBlockList, 2, true);
+                    bFound = true;
+                    matchedBlockList.Clear();
+                    return bFound;
                 }
                 matchedBlockList.Clear();
             }

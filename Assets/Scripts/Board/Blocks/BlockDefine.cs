@@ -8,6 +8,8 @@ namespace InHwan.Board
     {
         EMPTY = 0,
         BASIC = 1,
+        //2023 / 2 / 23
+        MUNCHKIN = 2,
     }
 
     public enum BlockBreed
@@ -18,6 +20,7 @@ namespace InHwan.Board
         BREED_2 = 2,
         BREED_3 = 3,
         BREED_4 = 4,
+        BREED_MUN = 5,
     }
 
     public enum BlockStatus

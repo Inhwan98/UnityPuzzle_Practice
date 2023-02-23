@@ -12,10 +12,11 @@ namespace InHwan.Board
         //---------------------------------------------------------------------
         public BlockStatus status;
         public BlockQuestType questType;
-
+        
         public MatchType match = MatchType.NONE;
 
         public short matchCount;
+        public int point;
 
         //---------------------------------------------------------------------
         // Properties 
@@ -156,16 +157,28 @@ namespace InHwan.Board
                 if (questType == BlockQuestType.CLEAR_SIMPLE || boardEnumerator.IsCageTypeCell(nRow, nCol)) //TODO cagetype cell 조건이 필요한가? 
                 {
                     Debug.Assert(m_nDurability > 0, $"durability is zero : {m_nDurability}");
-
+                    Debug.Log(questType);
                     durability--;
                 }
                 else if(questType == BlockQuestType.CLEAR_MUNCHKIN) //특수블럭
                 {
+                    // 2023/02/23/23:27
+                    status = BlockStatus.NORMAL;
                     Debug.Assert(m_nDurability > 0, $"durability is zero : {m_nDurability}");
                     Debug.Log("MunChkin");
 
+                    //2023/02/23/22:30
+                    this.type = BlockType.MUNCHKIN;
+                    blockBehaviour.UpdateView(true);
                     durability--;
                     //return true;
+                }
+                else
+                {
+                    //////////
+                    Debug.Assert(m_nDurability > 0, $"durability is zero : {m_nDurability}");
+
+                    durability--;
                 }
 
                 if (m_nDurability == 0)
@@ -204,12 +217,12 @@ namespace InHwan.Board
                 this.match = bAccumulate ? match.Add(matchType) : matchType; //match + matchType
             }
             matchCount = (short)matchType;
-            
-            /*else
+
+            if(questType != BlockQuestType.CLEAR_MUNCHKIN)
             {
-                questType = (BlockQuestType)matchType;
-            }*/
-            
+                questType = (BlockQuestType)match;
+            }
+            Debug.Log(questType);
         }
 
         /// <summary>
