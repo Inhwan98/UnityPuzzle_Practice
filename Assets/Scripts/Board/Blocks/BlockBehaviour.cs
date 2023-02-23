@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Scriptable;
+using InHwan.Scriptable;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     public class BlockBehaviour : MonoBehaviour
     {

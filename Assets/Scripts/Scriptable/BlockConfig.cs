@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Ninez.Board;
+using InHwan.Board;
 using UnityEngine;
 
-namespace Ninez.Scriptable
+namespace InHwan.Scriptable
 {
     [CreateAssetMenu(menuName = "Bingle/Block Config", fileName = "BlockConfig.asset")]
     public class BlockConfig : ScriptableObject

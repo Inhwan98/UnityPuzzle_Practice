@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Ninez.Effect
+namespace InHwan.Effect
 {
     [RequireComponent(typeof(ParticleSystem))]
     public class ParticleAutoDestroy : MonoBehaviour

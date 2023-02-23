@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Ninez.Stage
+namespace InHwan.Stage
 {
     public static class StageReader
     {

@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Ninez.Board;
+using InHwan.Board;
 using UnityEngine;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     public class CellBehaviour : MonoBehaviour
     {

@@ -1,15 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Board;
+using InHwan.Board;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     public class BoardEnumerator
     {
-        Ninez.Board.Board m_Board;
+        InHwan.Board.Board m_Board;
 
-        public BoardEnumerator(Ninez.Board.Board board)
+        public BoardEnumerator(InHwan.Board.Board board)
         {
             this.m_Board = board;
         }

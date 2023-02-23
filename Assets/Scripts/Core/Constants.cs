@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Ninez.Core
+namespace InHwan.Core
 {
     public static class Constants
     {

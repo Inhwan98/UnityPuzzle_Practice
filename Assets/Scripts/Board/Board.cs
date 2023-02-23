@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Quest;
-using Ninez.Util;
-using Ninez.Stage;
+using InHwan.Quest;
+using InHwan.Util;
+using InHwan.Stage;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     using IntIntKV = KeyValuePair<int, int>;
 
@@ -167,7 +167,7 @@ namespace Ninez.Board
             if (baseBlock == null)
                 return false;
 
-            if (baseBlock.match != Ninez.Quest.MatchType.NONE || !baseBlock.IsValidate() || m_Cells[nRow, nCol].IsObstracle())
+            if (baseBlock.match != InHwan.Quest.MatchType.NONE || !baseBlock.IsValidate() || m_Cells[nRow, nCol].IsObstracle())
                 return false;
 
             //검사하는 자신을 매칭 리스트에 우선 보관한다.
@@ -183,6 +183,7 @@ namespace Ninez.Board
                 if (!block.IsSafeEqual(baseBlock))
                     break;
 
+                isRight = true;
                 matchedBlockList.Add(block);
             }
 
@@ -227,14 +228,18 @@ namespace Ninez.Board
 
                         matchedBlockList.Insert(0, block);
                     }
+                    
                 }
                 if (matchedBlockList.Count == 4)
                 {
-                    SetBlockStatusMatched(matchedBlockList, true);
+                    SetBlockStatusMatched(matchedBlockList, 2, true);
                     bFound = true;
                     matchedBlockList.Clear();
                     return bFound;
                 }
+                //2023 / 02 / 23
+                matchedBlockList.RemoveAt(0);
+
                 if (isRight)
                 {
                     //1.1 아랫쪽 오른쪽 방향
@@ -262,7 +267,7 @@ namespace Ninez.Board
 
                     if (matchedBlockList.Count == 4)
                     {
-                        SetBlockStatusMatched(matchedBlockList, true);
+                        SetBlockStatusMatched(matchedBlockList, 2, true);
                         bFound = true;
                         matchedBlockList.Clear();
                         return bFound;
@@ -276,7 +281,7 @@ namespace Ninez.Board
             //    기준 블럭(baseBlock)을 제외하고 좌우에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
             if (matchedBlockList.Count >= 3)
             {
-                SetBlockStatusMatched(matchedBlockList, true);
+                SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, true);
                 bFound = true;
             }
 
@@ -309,7 +314,7 @@ namespace Ninez.Board
             //    기준 블럭(baseBlock)을 제외하고 상하에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
             if (matchedBlockList.Count >= 3)
             {
-                SetBlockStatusMatched(matchedBlockList, false);
+                SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, false);
                 bFound = true;
             }
 
@@ -323,9 +328,8 @@ namespace Ninez.Board
          * 리스트에 포함된 전체 블럭의 상태를 MATCH로 변경한다.
          * @param bHorz 매치된 방향 true이면 세로방향, false이면 가로방향    
          */
-        void SetBlockStatusMatched(List<Block> blockList, bool bHorz)
+        void SetBlockStatusMatched(List<Block> blockList, int nMatchCount, bool bHorz)
         {
-            int nMatchCount = blockList.Count;
             blockList.ForEach(block => block.UpdateBlockStatusMatched((MatchType)nMatchCount));
         }
 

@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Ninez.Util;
+using InHwan.Util;
 using UnityEngine;
 
-namespace Ninez.Stage
+namespace InHwan.Stage
 {
     /**
      * 플레이어의 액션을 처리하는 클래스

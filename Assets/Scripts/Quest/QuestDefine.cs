@@ -1,10 +1,11 @@
 ﻿using System;
 
-namespace Ninez.Quest
+namespace InHwan.Quest
 {
     public enum MatchType
     {
         NONE        = 0,
+        TWO_TWO     = 2,    //Munchkin
         THREE       = 3,    // 3 Match
         FOUR        = 4,    // 4 Match     -> CLEAR_HORZ 또는 VERT 퀘스트
         FIVE        = 5,    // 5 Match     -> CLEAR_LAZER 퀘스트
