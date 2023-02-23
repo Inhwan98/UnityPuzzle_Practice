@@ -16,7 +16,7 @@ namespace InHwan.Board
         {
             m_SpriteRenderer = GetComponent<SpriteRenderer>();
 
-            UpdateView(false);
+            UpdateView(true);
         }
 
         internal void SetBlock(Block block)
@@ -39,6 +39,10 @@ namespace InHwan.Board
             else if(m_Block.type == BlockType.BASIC)
             {
                 m_SpriteRenderer.sprite = m_BlockConfig.basicBlockSprites[(int)m_Block.breed];
+            }
+            else if(m_Block.type == BlockType.MUNCHKIN)
+            {
+                m_SpriteRenderer.sprite = m_BlockConfig.munchkinBlockSprites;
             }
         }
 
