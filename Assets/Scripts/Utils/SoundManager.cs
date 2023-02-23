@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ninez.Util
+namespace InHwan.Util
 {
     public enum Clip
     {

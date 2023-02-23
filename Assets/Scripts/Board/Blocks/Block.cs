@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Quest;
+using InHwan.Quest;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     public class Block
     {
@@ -159,9 +159,13 @@ namespace Ninez.Board
 
                     durability--;
                 }
-                else //특수블럭
+                else if(questType == BlockQuestType.CLEAR_MUNCHKIN) //특수블럭
                 {
-                    return true;
+                    Debug.Assert(m_nDurability > 0, $"durability is zero : {m_nDurability}");
+                    Debug.Log("MunChkin");
+
+                    durability--;
+                    //return true;
                 }
 
                 if (m_nDurability == 0)
@@ -190,13 +194,22 @@ namespace Ninez.Board
             if (match == MatchType.NONE)
             {
                 this.match = matchType;
+                if (this.match == MatchType.TWO_TWO)
+                {
+                    questType = BlockQuestType.CLEAR_MUNCHKIN;
+                }
             }
             else
             {
                 this.match = bAccumulate ? match.Add(matchType) : matchType; //match + matchType
             }
-
             matchCount = (short)matchType;
+            
+            /*else
+            {
+                questType = (BlockQuestType)matchType;
+            }*/
+            
         }
 
         /// <summary>

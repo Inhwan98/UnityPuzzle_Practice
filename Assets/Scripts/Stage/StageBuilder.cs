@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
-using Ninez.Board;
+using InHwan.Board;
 
-namespace Ninez.Stage
+namespace InHwan.Stage
 {
     public class StageBuilder
     {
@@ -66,8 +66,10 @@ namespace Ninez.Stage
         {
             if (m_StageInfo.GetCellType(nRow, nCol) == CellType.EMPTY)
                 return SpawnEmptyBlock();
+            if (m_StageInfo.GetCellType(nRow, nCol) == CellType.BASIC)
+                return SpawnBlock();
 
-            return SpawnBlock();
+            return null;
         }
 
         /// <summary>
@@ -107,7 +109,7 @@ namespace Ninez.Stage
         {
             return BlockFactory.SpawnBlock(BlockType.BASIC);
         }
-        
+
         /// <summary>
         /// BlockType.EMPTY인 블럭을 요청한다
         /// </summary>

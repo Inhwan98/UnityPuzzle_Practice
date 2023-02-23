@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     public static class BlockFactory
     {

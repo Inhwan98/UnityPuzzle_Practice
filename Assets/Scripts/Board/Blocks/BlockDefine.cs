@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     public enum BlockType
     {
         EMPTY = 0,
-        BASIC = 1
+        BASIC = 1,
     }
 
     public enum BlockBreed
@@ -18,7 +18,6 @@ namespace Ninez.Board
         BREED_2 = 2,
         BREED_3 = 3,
         BREED_4 = 4,
-        BREED_5 = 5,
     }
 
     public enum BlockStatus
@@ -32,14 +31,15 @@ namespace Ninez.Board
     {
         NONE = -1,
         CLEAR_SIMPLE = 0,       // 단일 블럭 제거
-        CLEAR_HORZ = 1,         // 세로줄 블럭 제거 (내구도 -1)  ->  4 match 가로형
-        CLEAR_VERT = 2,         // 가로줄 블럭 제거 -> 4 match 세로형
-        CLEAR_CIRCLE = 3,       // 인접한 주변영역 블럭 제거 -> T L 매치 (3 x 3, 4 x 3)
-        CLEAR_LAZER = 4,        // 지정된 블럭과 동일한 블럭 전체 제거 --> 5 match
-        CLEAR_HORZ_BUFF = 5,    // HORZ + CIRCLE 조합
-        CLEAR_VERT_BUFF = 6,    // VERT + CIRCLE 조합    
-        CLEAR_CIRCLE_BUFF = 7,  // CIRCLE + CIRCLE 조합
-        CLEAR_LAZER_BUFF = 8    // LAZER + LAZER 조합
+        CLEAR_MUNCHKIN,
+        CLEAR_HORZ = 2,         // 세로줄 블럭 제거 (내구도 -1)  ->  4 match 가로형
+        CLEAR_VERT = 3,         // 가로줄 블럭 제거 -> 4 match 세로형
+        CLEAR_CIRCLE = 4,       // 인접한 주변영역 블럭 제거 -> T L 매치 (3 x 3, 4 x 3)
+        CLEAR_LAZER = 5,        // 지정된 블럭과 동일한 블럭 전체 제거 --> 5 match
+        CLEAR_HORZ_BUF = 6,    // HORZ + CIRCLE 조합
+        CLEAR_VERT_BUFF = 7,    // VERT + CIRCLE 조합    
+        CLEAR_CIRCLE_BUFF = 8,  // CIRCLE + CIRCLE 조합
+        CLEAR_LAZER_BUFF = 9    // LAZER + LAZER 조합
     }
 
 

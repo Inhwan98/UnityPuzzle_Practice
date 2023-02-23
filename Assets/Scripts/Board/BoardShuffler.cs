@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Core;
+using InHwan.Core;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
     using BlockVectorKV = KeyValuePair<Block, Vector2Int>;
 

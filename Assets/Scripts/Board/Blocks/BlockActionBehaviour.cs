@@ -2,11 +2,11 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using Ninez.Scriptable;
-using Ninez.Util;
+using InHwan.Scriptable;
+using InHwan.Util;
 using UnityEngine;
 
-namespace Ninez.Board
+namespace InHwan.Board
 {
 	/*
      * Block GameObject의 애니메이션을 담당한다.

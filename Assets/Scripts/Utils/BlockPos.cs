@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ninez.Util
+namespace InHwan.Util
 {
     /**
      * 블럭의 위치를 저장하는 structure

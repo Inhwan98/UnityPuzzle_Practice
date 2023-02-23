@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Board;
+using InHwan.Board;
 
-namespace Ninez.Stage
+namespace InHwan.Stage
 {
     /// <summary>
     /// stage 파일에서 읽어온 정보 (스테이지 구성에 사용) 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Ninez.Util
+namespace InHwan.Util
 {
     public static class SortedListMethods
     {

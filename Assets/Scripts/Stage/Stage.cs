@@ -1,20 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Board;
-using Ninez.Util;
-using Ninez.Core;
+using InHwan.Board;
+using InHwan.Util;
+using InHwan.Core;
 using System;
 
-namespace Ninez.Stage
+namespace InHwan.Stage
 {
     public class Stage
     {
         public int maxRow { get { return m_Board.maxRow; } }
         public int maxCol { get { return m_Board.maxCol; } }
 
-        Ninez.Board.Board m_Board;
-        public Ninez.Board.Board board { get { return m_Board; } }
+        InHwan.Board.Board m_Board;
+        public InHwan.Board.Board board { get { return m_Board; } }
 
         StageBuilder m_StageBuilder;
 
@@ -32,7 +32,7 @@ namespace Ninez.Stage
         {
             m_StageBuilder = stageBuilder;
 
-            m_Board = new Ninez.Board.Board(nRow, nCol);
+            m_Board = new InHwan.Board.Board(nRow, nCol);
         }
 
         /// <summary>

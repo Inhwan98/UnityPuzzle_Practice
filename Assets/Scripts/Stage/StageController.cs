@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Util;
+using InHwan.Util;
 
-namespace Ninez.Stage
+namespace InHwan.Stage
 {
     public class StageController : MonoBehaviour
     {
@@ -54,7 +54,7 @@ namespace Ninez.Stage
         void BuildStage()
         {
             //1. Stage를 구성한다.
-            m_Stage = StageBuilder.BuildStage(nStage : 1);
+            m_Stage = StageBuilder.BuildStage(nStage : 4);
             m_ActionManager = new ActionManager(m_Container, m_Stage);
 
             //2. 생성한 stage 정보를 이용하여 씬을 구성한.
