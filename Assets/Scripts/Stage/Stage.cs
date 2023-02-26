@@ -57,7 +57,7 @@ namespace InHwan.Stage
          * 유효한 스와이프인 경우 : 스와이프 방향으로 블럭 위치가 교체된다.
          * 유효지 않는 스와이프 경우 : 화면에 스와이프 방향으로 액션을 보여주고, 원상태로 복구하는 액션 보여준다
          */
-        public IEnumerator CoDoSwipeAction(int nRow, int nCol, Swipe swipeDir, Returnable<bool> actionResult)
+        public IEnumerator CoDoSwipeAction(int nRow, int nCol, Swipe swipeDir, Returnable<bool> actionResult, Returnable<bool> bActionMunchkin)
         {
             actionResult.value = false; //코루틴 리턴값 RESET
 
@@ -81,29 +81,39 @@ namespace InHwan.Stage
                 Vector3 targetPos = targetBlock.blockObj.transform.position;
 
                 //2.2 스와이프 액션을 실행한다.
-                if (targetBlock.IsSwipeable (baseBlock))
+                if (targetBlock.IsSwipeable(baseBlock))
                 {
-                    //2.2.1 상대방의 블럭 위치로 이동하는 애니메이션을 수행한다
-                    baseBlock.MoveTo(targetPos, Constants.SWIPE_DURATION);
-                    targetBlock.MoveTo(basePos, Constants.SWIPE_DURATION);
+                    if (!(baseBlock.type == BlockType.MUNCHKIN))
+                    {
+                        //2.2.1 상대방의 블럭 위치로 이동하는 애니메이션을 수행한다
+                        baseBlock.MoveTo(targetPos, Constants.SWIPE_DURATION);
+                        targetBlock.MoveTo(basePos, Constants.SWIPE_DURATION);
 
-                    yield return new WaitForSeconds(Constants.SWIPE_DURATION);
+                        yield return new WaitForSeconds(Constants.SWIPE_DURATION);
+                        //2.2.2 Board에 저장된 블럭의 위치를 교환한다
 
-                    //2.2.2 Board에 저장된 블럭의 위치를 교환한다
-                    
-                    ///
-                    blocks[nRow, nCol] = targetBlock;
-                    blocks[nSwipeRow, nSwipeCol] = baseBlock;
+                        ///
+                        blocks[nRow, nCol] = targetBlock;
+                        blocks[nSwipeRow, nSwipeCol] = baseBlock;
 
-                    blocks[nRow, nCol].IsSpecial = true;
-                    blocks[nSwipeRow, nSwipeCol].IsSpecial = true;
-
+                        //특수 블럭 생성하기 위해 우선 스왑한 두가지 전부 true
+                        blocks[nRow, nCol].IsSpecial = true;
+                        blocks[nSwipeRow, nSwipeCol].IsSpecial = true;
+                    }
+                    else
+                    {
+                        bActionMunchkin.value = true;
+                    }
                     actionResult.value = true;
                 }
             }
             yield break;
         }
-
+        //먼치킨 블럭액션 Stage -> Board로 이동
+        public IEnumerator ActionMunChkin(int nRow, int nCol, Swipe swipeDir)
+        {
+            yield return m_Board.ActionMunChkin(nRow, nCol, swipeDir);
+        }
         /*
          * 스테이지를 구성하는 전체 보드를 평가한다.   
          * 각 블럭에 지정된 상태/종류/카운터 등에 따라서 블럭의 다음 상태를 변경한다.

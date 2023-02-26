@@ -61,27 +61,42 @@ namespace InHwan.Stage
 
                 //1. swipe action 수행
                 Returnable<bool> bSwipedBlock = new Returnable<bool>(false);
-                
+                Returnable<bool> bActionMunchkin = new Returnable<bool>(false);
+
                 /*Returnable<Block> targetBlock = new Returnable<Block>(m_Stage.blocks[0, 0]);
-                Returnable<Block> bassBlock = new Returnable<Block>(m_Stage.blocks[0, 0]);
-*/
-                yield return m_Stage.CoDoSwipeAction(nRow, nCol, swipeDir, bSwipedBlock);
+                Returnable<Block> bassBlock = new Returnable<Block>(m_Stage.blocks[0, 0]);*/
+
+                yield return m_Stage.CoDoSwipeAction(nRow, nCol, swipeDir, bSwipedBlock, bActionMunchkin);
+
+                //먼치킨블럭을 이동한다면 true
+                if (bActionMunchkin.value)
+                {
+                    yield return ActionMunChkin(nRow, nCol, swipeDir);
+                }
                 //2. 스와이프 성공한 경우 보드를 평가(매치블럭삭제, 빈블럭 드롭, 새블럭 Spawn 등)한다.
-                if (bSwipedBlock.value)
+                else if (bSwipedBlock.value)
                 {
                     Returnable<bool> bMatchBlock = new Returnable<bool>(false);
                     
-                    yield return EvaluateBoard(bMatchBlock);
+                    yield return EvaluateBoard(bMatchBlock, bActionMunchkin);
 
                     //스와이프한 블럭이 매치되지 않은 경우에 원상태 복귀
                     if (!bMatchBlock.value)
                     {
-                        yield return m_Stage.CoDoSwipeAction(nRow, nCol, swipeDir, bSwipedBlock);
+                        yield return m_Stage.CoDoSwipeAction(nRow, nCol, swipeDir, bSwipedBlock, bActionMunchkin);
                     }
                 }
-
                 m_bRunning = false;  //액션 실행 상태 OFF
             }
+            yield break;
+        }
+
+        //먼치킨 블럭의 nRow, nCol 위치와 드래그 요청한 방향을 전달
+        IEnumerator ActionMunChkin(int nRow, int nCol, Swipe swipeDir)
+        {
+            yield return StartCoroutine(m_Stage.ActionMunChkin(nRow, nCol, swipeDir));
+            //먼치킨 블럭으로 해당 줄 삭제후 빈블럭 드롭 후 새 블럭 생성
+            yield return StartCoroutine(m_Stage.PostprocessAfterEvaluate());
             yield break;
         }
 
@@ -91,7 +106,7 @@ namespace InHwan.Stage
          * matchResult : 실행 결과를 리턴받은 클래스 
          * true : 매치된 블럭 있는 경우, false : 없는 경우
          */
-        IEnumerator EvaluateBoard(Returnable<bool> matchResult)
+        IEnumerator EvaluateBoard(Returnable<bool> matchResult, Returnable<bool> bActionMunchkin)
         {
             while (true)    //매칭된 블럭이 있는 경우 반복 수행한다.
             {
@@ -108,6 +123,7 @@ namespace InHwan.Stage
 
                     // 매칭 블럭 제거 후 빈블럭 드롭 후 새 블럭 생성
                     yield return StartCoroutine(m_Stage.PostprocessAfterEvaluate());
+                    
                 }
                 //3. 3매치 블럭이 없는 경우 while 문 종료
                 else

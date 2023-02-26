@@ -191,7 +191,6 @@ namespace InHwan.Board
                     {
                         IsSpecial = false;
                     }
-
                 }
 
                 if (IsSpecial == true && type >  BlockType.BASIC)

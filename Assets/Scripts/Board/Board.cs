@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using InHwan.Quest;
 using InHwan.Util;
+using InHwan.Core;
 using InHwan.Stage;
 
 namespace InHwan.Board
@@ -71,6 +72,50 @@ namespace InHwan.Board
                 }
         }
 
+        //Munchkin 효과
+        public IEnumerator ActionMunChkin(int nCurentRow, int nCurentCol, Swipe swipeDir)
+        {
+            Block MunChkinBlock = m_Blocks[nCurentRow, nCurentCol];
+            
+            m_Blocks[nCurentRow, nCurentCol] = null; //먼치킨 블럭위치 블럭 제거.
+            while (true)
+            {
+                nCurentRow += swipeDir.GetTargetRow(); //Right : +1, LEFT : -1
+                nCurentCol += swipeDir.GetTargetCol(); //UP : +1, DOWN : -1
+                if(m_Blocks[nCurentRow, nCurentCol] != null)
+                {
+                    Block block = m_Blocks[nCurentRow, nCurentCol];
+                 
+                    //2.1 스와이프 대상 블럭(소스, 타겟)과 각 블럭의 이동전 위치를 저장한다.
+                    Block targetBlock = m_Blocks[nCurentRow, nCurentCol];
+                   
+                    //Debug.Assert(MunChkinBlock != null && targetBlock != null);
+
+                    Vector3 targetPos = targetBlock.blockObj.transform.position;
+
+                    MunChkinBlock.MoveTo(targetPos, Constants.MUNCHKIN_DURATION);
+
+                    m_Blocks[nCurentRow, nCurentCol] = null;
+                    block.Destroy();
+
+                    SoundManager.instance.PlayOneShot(Clip.BlcokClear);
+                    yield return new WaitForSeconds(Constants.MUNCHKIN_DURATION);
+                }
+                //먼치킨 블럭이 셀의 끝(Hole)에 도착하게한뒤 삭제해준다.
+                else
+                {
+                    Cell HoleBlock = m_Cells[nCurentRow, nCurentCol];
+                    Vector3 endPos = HoleBlock.cellObj.transform.position;
+                    MunChkinBlock.MoveTo(endPos, Constants.SWIPE_DURATION);
+                    MunChkinBlock.Destroy();
+                    
+                    yield return new WaitForSeconds(0.2f);
+                    break;
+                }
+            }
+            yield break;
+        }
+
         /**
          * 호출 결과 : 3 매칭된 블럭이 제거된다.
          */
@@ -78,7 +123,7 @@ namespace InHwan.Board
         {
             //1. 모든 블럭의 매칭 정보(개수, 상태, 내구도)를 계산한 후, 3매치 블럭이 있으면 true 리턴 
             bool bMatchedBlockFound = UpdateAllBlocksMatchedStatus();
-
+            
             //2. 3매칭 블럭 없는 경우 
             if (bMatchedBlockFound == false)
             {
@@ -97,8 +142,6 @@ namespace InHwan.Board
                     Block block = m_Blocks[nRow, nCol];
 
                     block?.DoEvaluation(m_Enumerator, nRow, nCol);
-
-                    
                 }
 
             //3.2. 두번째 phase
@@ -113,7 +156,7 @@ namespace InHwan.Board
 
                     if (block != null)
                     {
-                        //
+                        //매치가 안됀 블록은 IsSpecial을 false로
                         if (block.IsSpecial == true)
                         {
                             if (m_Blocks[nRow, nCol].type <= BlockType.BASIC)
