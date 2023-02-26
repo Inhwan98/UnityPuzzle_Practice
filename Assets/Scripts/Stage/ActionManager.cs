@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using InHwan.Util;
+using InHwan.Board;
 using UnityEngine;
 
 namespace InHwan.Stage
@@ -60,12 +61,16 @@ namespace InHwan.Stage
 
                 //1. swipe action 수행
                 Returnable<bool> bSwipedBlock = new Returnable<bool>(false);
+                
+                /*Returnable<Block> targetBlock = new Returnable<Block>(m_Stage.blocks[0, 0]);
+                Returnable<Block> bassBlock = new Returnable<Block>(m_Stage.blocks[0, 0]);
+*/
                 yield return m_Stage.CoDoSwipeAction(nRow, nCol, swipeDir, bSwipedBlock);
-
-                //2. 스와이프 성공한 경우 브드를 평가(매치블럭삭제, 빈블럭 드롭, 새블럭 Spawn 등)한다.
+                //2. 스와이프 성공한 경우 보드를 평가(매치블럭삭제, 빈블럭 드롭, 새블럭 Spawn 등)한다.
                 if (bSwipedBlock.value)
                 {
                     Returnable<bool> bMatchBlock = new Returnable<bool>(false);
+                    
                     yield return EvaluateBoard(bMatchBlock);
 
                     //스와이프한 블럭이 매치되지 않은 경우에 원상태 복귀
@@ -84,7 +89,7 @@ namespace InHwan.Stage
          * 현상태에서 보드를 평가한다. 즉 보드를 구성하는 블럭에 게임규칙을 적용시킨다.
          * 매치된 블럭은 제거하고 빈자리에는 새로운 블럭을 생성한다.    
          * matchResult : 실행 결과를 리턴받은 클래스 
-         *               true : 매치된 블럭 있는 경우, false : 없는 경우
+         * true : 매치된 블럭 있는 경우, false : 없는 경우
          */
         IEnumerator EvaluateBoard(Returnable<bool> matchResult)
         {

@@ -18,6 +18,13 @@ namespace InHwan.Stage
 
         StageBuilder m_StageBuilder;
 
+        Swipe swipeDir;
+        public Swipe SwipeDir
+        {
+            get { return swipeDir; }
+            set { swipeDir = value; }
+        }
+
         public Block[,] blocks { get { return m_Board.blocks; } }
         public Cell[,] cells { get { return m_Board.cells; } }
 
@@ -74,7 +81,7 @@ namespace InHwan.Stage
                 Vector3 targetPos = targetBlock.blockObj.transform.position;
 
                 //2.2 스와이프 액션을 실행한다.
-                if (targetBlock.IsSwipeable(baseBlock))
+                if (targetBlock.IsSwipeable (baseBlock))
                 {
                     //2.2.1 상대방의 블럭 위치로 이동하는 애니메이션을 수행한다
                     baseBlock.MoveTo(targetPos, Constants.SWIPE_DURATION);
@@ -83,13 +90,17 @@ namespace InHwan.Stage
                     yield return new WaitForSeconds(Constants.SWIPE_DURATION);
 
                     //2.2.2 Board에 저장된 블럭의 위치를 교환한다
+                    
+                    ///
                     blocks[nRow, nCol] = targetBlock;
                     blocks[nSwipeRow, nSwipeCol] = baseBlock;
+
+                    blocks[nRow, nCol].IsSpecial = true;
+                    blocks[nSwipeRow, nSwipeCol].IsSpecial = true;
 
                     actionResult.value = true;
                 }
             }
-
             yield break;
         }
 
