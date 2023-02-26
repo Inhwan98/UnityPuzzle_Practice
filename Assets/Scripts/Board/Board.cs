@@ -80,7 +80,7 @@ namespace InHwan.Board
             bool bMatchedBlockFound = UpdateAllBlocksMatchedStatus();
 
             //2. 3매칭 블럭 없는 경우 
-            if(bMatchedBlockFound == false)
+            if (bMatchedBlockFound == false)
             {
                 matchResult.value = false;
                 yield break;
@@ -97,8 +97,10 @@ namespace InHwan.Board
                     Block block = m_Blocks[nRow, nCol];
 
                     block?.DoEvaluation(m_Enumerator, nRow, nCol);
+
+                    
                 }
-                
+
             //3.2. 두번째 phase
             //   첫번째 Phase에서 반영된 블럭의 상태값에 따라서 블럭의 최종 상태를 반영한.
             List<Block> clearBlocks = new List<Block>();
@@ -111,12 +113,20 @@ namespace InHwan.Board
 
                     if (block != null)
                     {
+                        //
+                        if (block.IsSpecial == true)
+                        {
+                            if (m_Blocks[nRow, nCol].type <= BlockType.BASIC)
+                                m_Blocks[nRow, nCol].IsSpecial = false;
+                        }
+
                         if (block.status == BlockStatus.CLEAR)
                         {
                             clearBlocks.Add(block);
 
                             m_Blocks[nRow, nCol] = null;    //보드에서 블럭 제거 (블럭 객체 제거 X)
                         }
+                       
                     }
                 }
             }
@@ -156,8 +166,8 @@ namespace InHwan.Board
 
         /*
          * 지정된 row, col의 블럭이 Match 블럭인지 판단한다.
-         * @param matchedBlockList GC 발생을 제거하기 위해 Caller에서 생성해서 전달받는다    
-         */
+         * @param matchedBlockList GC 발생을 제거하기 위해 Caller에서 생성해서 전달받는다   
+          */
         public bool EvalBlocksIfMatched(int nRow, int nCol, List<Block> matchedBlockList)
         {
             bool bFound = false;
@@ -175,7 +185,6 @@ namespace InHwan.Board
 
             //1. 가로 블럭 검색
             Block block;
-
             //1.1 오른쪽 방향
             for (int i = nCol + 1; i < m_nCol; i++)
             {
@@ -194,7 +203,7 @@ namespace InHwan.Board
                 if (!block.IsSafeEqual(baseBlock))
                     break;
 
-                matchedBlockList.Insert(0, block);
+                matchedBlockList.Add(block);
             }
 
             ///
@@ -208,7 +217,7 @@ namespace InHwan.Board
                     //1.1 위쪽 오른쪽 방향
                     for (int i = nCol; i < m_nCol; i++)
                     {
-                        if (nRow + 1 == m_nRow) break;
+                        //if (nRow + 1 > m_nRow) break;
 
                         block = m_Blocks[nRow + 1, i];
                         if (!block.IsSafeEqual(baseBlock))
@@ -222,12 +231,12 @@ namespace InHwan.Board
                     //1.2 위쪽 왼쪽 방향
                     for (int i = nCol; i >= 0; i--)
                     {
-                        if (nRow + 1 == m_nRow) break;
+                        //if (nRow + 1 > m_nRow) break;
                         block = m_Blocks[nRow + 1, i];
                         if (!block.IsSafeEqual(baseBlock))
                             break;
 
-                        matchedBlockList.Insert(0, block);
+                        matchedBlockList.Add(block);
                     }
                 }
                 if (matchedBlockList.Count == 4)
@@ -238,12 +247,8 @@ namespace InHwan.Board
                     return bFound;
                 }
                 //2023 / 02 / 23
-                if (isRight)
-                {
-                    matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
-                }
-                else
-                    matchedBlockList.RemoveAt(0);
+
+                matchedBlockList.RemoveAt(0);
 
                 //오른쪽으로 2개 맞다면...
                 if (isRight)
@@ -251,7 +256,7 @@ namespace InHwan.Board
                     //1.1 아랫쪽 오른쪽 방향
                     for (int i = nCol; i < m_nCol; i++)
                     {
-                        if (nRow - 1 < 0) break;
+                        //if (nRow - 1 < 0) break;
 
                         block = m_Blocks[nRow - 1, i];
                         if (!block.IsSafeEqual(baseBlock))
@@ -265,13 +270,13 @@ namespace InHwan.Board
                     //1.2 아랫쪽 왼쪽 방향
                     for (int i = nCol; i >= 0; i--)
                     {
-                        if (nRow - 1 < 0) break;
+                        //if (nRow - 1 < 0) break;
 
                         block = m_Blocks[nRow - 1, i];
                         if (!block.IsSafeEqual(baseBlock))
                             break;
 
-                        matchedBlockList.Insert(0, block);
+                        matchedBlockList.Add(block);
                     }
                 }
 
@@ -316,7 +321,7 @@ namespace InHwan.Board
                 if (!block.IsSafeEqual(baseBlock))
                     break;
 
-                matchedBlockList.Insert(0, block);
+                matchedBlockList.Add(block);
             }
 
             //2.3 매치된 상태인지 판단한다
@@ -339,6 +344,19 @@ namespace InHwan.Board
          */
         void SetBlockStatusMatched(List<Block> blockList, int nMatchCount, bool bHorz)
         {
+            bool isSpecial = false;
+            for(int i = 0; i<blockList.Count; i++)
+            {
+                if (blockList[i].IsSpecial == true)
+                {
+                    isSpecial = true;
+                    break;
+                }
+            }
+            if(isSpecial == false)
+            {
+                blockList[blockList.Count - 1].IsSpecial = true;
+            }
             blockList.ForEach(block => block.UpdateBlockStatusMatched((MatchType)nMatchCount));
         }
 
@@ -486,7 +504,7 @@ namespace InHwan.Board
         /// <returns></returns>
         public float CalcInitX(float offset = 0)
         {
-            return -m_nCol / 2.0f + offset;   
+            return -m_nCol / 2.0f + offset;
         }
 
         //퍼즐의 시작 Y 위치, left - bottom 좌표
@@ -517,7 +535,7 @@ namespace InHwan.Board
 
             while (true)
             {
-                genBreed = (BlockBreed)UnityEngine.Random.Range(0, 6); //TODO 스테이지파일에서 Spawn 정책을 이용해야함
+                genBreed = (BlockBreed)UnityEngine.Random.Range(0, 5); //TODO 스테이지파일에서 Spawn 정책을 이용해야함
 
                 if (notAllowedBreed == genBreed)
                     continue;

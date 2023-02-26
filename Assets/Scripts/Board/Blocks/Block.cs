@@ -74,6 +74,14 @@ namespace InHwan.Board
             set { m_nDurability = value; }
         }
 
+        //2023/02/25 modify
+        bool isSpecial;
+        public bool IsSpecial
+        {
+            get { return isSpecial; }
+            set { isSpecial = value; }
+        }
+
         protected BlockActionBehaviour m_BlockActionBehaviour;
 
         public bool isMoving
@@ -106,6 +114,8 @@ namespace InHwan.Board
             m_Breed = BlockBreed.NA;
 
             m_nDurability = 1;
+            // modify
+            IsSpecial = false;
         }
 
         //---------------------------------------------------------------------
@@ -158,29 +168,40 @@ namespace InHwan.Board
                 {
                     Debug.Assert(m_nDurability > 0, $"durability is zero : {m_nDurability}");
                     Debug.Log(questType);
-                    durability--;
+                    if (IsSpecial == true)
+                    {
+                        IsSpecial = false;
+                    }
                 }
                 else if(questType == BlockQuestType.CLEAR_MUNCHKIN) //특수블럭
                 {
-                    // 2023/02/23/23:27
-                    status = BlockStatus.NORMAL;
                     Debug.Assert(m_nDurability > 0, $"durability is zero : {m_nDurability}");
-                    Debug.Log("MunChkin");
 
-                    //2023/02/23/22:30
-                    this.type = BlockType.MUNCHKIN;
-                    blockBehaviour.UpdateView(true);
-                    durability--;
-                    //return true;
+                    if (IsSpecial == true)
+                    {
+                        this.type = BlockType.MUNCHKIN;
+                        breed = BlockBreed.BREED_MUN;
+                    }
                 }
                 else
                 {
                     //////////
                     Debug.Assert(m_nDurability > 0, $"durability is zero : {m_nDurability}");
+                    if (IsSpecial == true)
+                    {
+                        IsSpecial = false;
+                    }
 
-                    durability--;
                 }
 
+                if (IsSpecial == true && type >  BlockType.BASIC)
+                {
+                    //blockBehaviour.UpdateView(true);
+                    //IsSpecial = false;
+                    return true;
+                }
+
+                durability--;
                 if (m_nDurability == 0)
                 {
                     status = BlockStatus.CLEAR;
@@ -218,11 +239,12 @@ namespace InHwan.Board
             }
             matchCount = (short)matchType;
 
-            if(questType != BlockQuestType.CLEAR_MUNCHKIN)
+            if (!(questType == BlockQuestType.CLEAR_MUNCHKIN))
             {
                 questType = (BlockQuestType)match;
             }
             Debug.Log(questType);
+
         }
 
         /// <summary>

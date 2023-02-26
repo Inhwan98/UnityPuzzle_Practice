@@ -91,12 +91,13 @@ namespace InHwan.Stage
                 Vector2 point = m_InputManager.touch2BoardPosition;
 
                 //2.2 스와이프 방향을 구한다.
-                Swipe swipeDir = m_InputManager.EvalSwipeDir(m_ClickPos, point);
+
+                m_Stage.SwipeDir = m_InputManager.EvalSwipeDir(m_ClickPos, point);
 
                 //Debug.Log($"Swipe : {swipeDir} , Block = {m_BlockDownPos}");
 
-                if (swipeDir != Swipe.NA)
-                    m_ActionManager.DoSwipeAction(m_BlockDownPos.row, m_BlockDownPos.col, swipeDir);
+                if (m_Stage.SwipeDir != Swipe.NA)
+                    m_ActionManager.DoSwipeAction(m_BlockDownPos.row, m_BlockDownPos.col, m_Stage.SwipeDir);
 
                 m_bTouchDown = false;   //클릭 상태 플래그 OFF
             }
