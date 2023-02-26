@@ -26,7 +26,7 @@ namespace InHwan.Board
                 m_CellBehaviour.SetCell(this);
             }
         }
-
+        public Transform cellObj { get { return m_CellBehaviour?.transform; } }
         //-------------------------------------------------------
         // Constructor
         //-------------------------------------------------------
