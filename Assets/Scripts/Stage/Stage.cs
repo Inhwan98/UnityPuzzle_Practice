@@ -17,6 +17,7 @@ namespace InHwan.Stage
         public InHwan.Board.Board board { get { return m_Board; } }
 
         StageBuilder m_StageBuilder;
+        
 
         Swipe swipeDir;
         public Swipe SwipeDir

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using InHwan.Util;
 using InHwan.Scriptable;
+using UnityEngine.SceneManagement;
 
 namespace InHwan.Stage
 {
@@ -14,18 +15,19 @@ namespace InHwan.Stage
         InputManager m_InputManager;
         ActionManager m_ActionManager;
         
-        StageState stageState; //시작할 스테이지
+        public StageState stageState; //Inspector창에서 고른 시작할 스테이지
 
         //Event Members
         bool m_bTouchDown;          //입력상태 처리 플래그, 유효한 블럭을 클릭한 경우 true
         BlockPos m_BlockDownPos;    //블럭 인덱스 (보드에 저장된 위치)
         Vector3 m_ClickPos;         //DOWN 위치(보드 기준 Local 좌표)
 
-        public CntUIConfig m_CntUIConfig;
+        public GameObject[] GameUI;
+        public UIConfig m_UIConfig;
         public Text CntMoveText;
         public Text CntTargetText;
         public Text CntScoreText;
-        
+        public Text EndCntTargetText;
 
         [SerializeField] Transform m_Container;
         [SerializeField] GameObject m_CellPrefab;
@@ -34,6 +36,7 @@ namespace InHwan.Stage
         void Start()
         {
             InitStage();
+            
         }
 
         private void Update()
@@ -41,7 +44,9 @@ namespace InHwan.Stage
             if (!m_bInit)
                 return;
 
+            DisPlayUI();
             OnInputHandler();
+            
         }
 
         void InitStage()
@@ -64,16 +69,41 @@ namespace InHwan.Stage
         void BuildStage()
         {
             //1. Stage를 구성한다.
+
+            switch(stageState)
+            {
+                case StageState.FIRST:
+                    m_UIConfig.TargetBlock = Board.BlockBreed.BREED_MUN;
+                    m_UIConfig.CntMove = 21;
+                    m_UIConfig.CntTarget = 3;
+                    break;
+                case StageState.SECOND:
+                    m_UIConfig.TargetBlock = Board.BlockBreed.BREED_0;
+                    m_UIConfig.CntMove = 0;
+                    m_UIConfig.CntTarget = 0;
+                    break;
+            }
+            Debug.Assert(m_UIConfig.CntMove > 0 && m_UIConfig.CntTarget > 0, "The stage is not ready.");
             //CntUIConfig에 입력된 값에따라 목표 UI설정과 Stage설정
-            CntMoveText.text = "" + m_CntUIConfig.CntMove;
-            CntTargetText.text = "" + m_CntUIConfig.CntTarget;
+            CntMoveText.text = "" + m_UIConfig.CntMove;
+            CntTargetText.text = "" + m_UIConfig.CntTarget;
+            EndCntTargetText.text = CntTargetText.text;
             CntScoreText.text = "" + 0;
 
-            m_Stage = StageBuilder.BuildStage(nStage : m_CntUIConfig.CntStage);
-            m_ActionManager = new ActionManager(m_Container, m_Stage);
+            //nStage : 
+            m_Stage = StageBuilder.BuildStage((int)stageState);
+            m_ActionManager = new ActionManager(m_Container, m_Stage, m_UIConfig, GameUI);
 
             //2. 생성한 stage 정보를 이용하여 씬을 구성한.
             m_Stage.ComposeStage(m_CellPrefab, m_BlockPrefab, m_Container);
+        }
+
+        void DisPlayUI()
+        {
+            CntMoveText.text = "" + m_UIConfig.CntMove;
+            CntTargetText.text = "" + m_UIConfig.CntTarget;
+            EndCntTargetText.text = CntTargetText.text;
+            CntScoreText.text = "" + 0;
         }
 
         void OnInputHandler()
@@ -116,6 +146,16 @@ namespace InHwan.Stage
 
                 m_bTouchDown = false;   //클릭 상태 플래그 OFF
             }
+        }
+
+        public void ReStartGame()
+        {
+            SceneManager.LoadScene("PlayScene");
+        }
+
+        public void GameQuit()
+        {
+            Application.Quit();
         }
     }
 }

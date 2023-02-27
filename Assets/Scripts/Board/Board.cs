@@ -217,6 +217,7 @@ namespace InHwan.Board
             bool isRight = false;
 
             Block baseBlock = m_Blocks[nRow, nCol];
+
             if (baseBlock == null)
                 return false;
 
@@ -246,9 +247,10 @@ namespace InHwan.Board
                 if (!block.IsSafeEqual(baseBlock))
                     break;
 
-                matchedBlockList.Add(block);
+                matchedBlockList.Insert(0, block);
             }
 
+            #region Munchkin 2*n...
             ///
             /// 2 * 2 기능 추가
             ///
@@ -279,19 +281,22 @@ namespace InHwan.Board
                         if (!block.IsSafeEqual(baseBlock))
                             break;
 
-                        matchedBlockList.Add(block);
+                        matchedBlockList.Insert(0,block);
                     }
                 }
-                if (matchedBlockList.Count == 4)
+                if (matchedBlockList.Count >= 4)
                 {
                     SetBlockStatusMatched(matchedBlockList, 2, true);
                     bFound = true;
                     matchedBlockList.Clear();
                     return bFound;
                 }
-                //2023 / 02 / 23
-
-                matchedBlockList.RemoveAt(0);
+                if (matchedBlockList.Count >= 3)
+                {
+                    //2023 / 02 / 23
+                    if (isRight) matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                    else matchedBlockList.RemoveAt(0);
+                }
 
                 //오른쪽으로 2개 맞다면...
                 if (isRight)
@@ -323,30 +328,124 @@ namespace InHwan.Board
                     }
                 }
 
-                if (matchedBlockList.Count == 4)
+                if (matchedBlockList.Count >= 4)
                 {
                     SetBlockStatusMatched(matchedBlockList, 2, true);
                     bFound = true;
                     matchedBlockList.Clear();
                     return bFound;
                 }
-                matchedBlockList.Clear();
+                if (matchedBlockList.Count >= 3)
+                {
+                    //2023 / 02 / 23
+                    if (isRight) matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                    else matchedBlockList.RemoveAt(0);
+                }
             }
+            #endregion
 
-
+            #region Munchkin n*n...
             //1.3 매치된 상태인지 판단한다
             //    기준 블럭(baseBlock)을 제외하고 좌우에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
             if (matchedBlockList.Count >= 3)
             {
-                SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, true);
+                //오른쪽으로 2개 맞다면...
+                //1.1 위쪽 오른쪽 방향
+                
+                bool isMunchkin = false;
+                for (int j = nRow + 1; j < m_nRow; j++)
+                {
+                    //윗쪽 오른쪽 탐사
+                    int cnt = 0;
+                    for (int i = nCol; i < m_nCol; i++)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+
+                        block = m_Blocks[j, i];
+                        if (!block.IsSafeEqual(baseBlock)) break;
+                            
+                        cnt++;
+                        matchedBlockList.Add(block);
+                    }
+                    if (matchedBlockList.Count == 3) break;
+                    if (cnt == 0) break;
+
+                    //1.2 위쪽 왼쪽 방향
+                    for (int i = nCol - 1; i >= 0; i--)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+                        block = m_Blocks[j, i];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+                    if (matchedBlockList.Count == 4)
+                    {
+                        matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                        break;
+                    }
+                    if (cnt == 1) break;
+                    isMunchkin = true;
+                }
+                if (isMunchkin)
+                {
+                    SetBlockStatusMatched(matchedBlockList, 2, true);
+                    matchedBlockList.Clear();
+                    bFound = true;
+                    return bFound;
+                }
+
+                for (int j = nRow - 1; j < m_nRow; j--)
+                {
+                    //아랫쪽 오른쪽 탐사
+                    int cnt = 0;
+                    for (int i = nCol; i < m_nCol; i++)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+
+                        block = m_Blocks[j, i];
+                        if (!block.IsSafeEqual(baseBlock)) break;
+
+                        cnt++;
+                        matchedBlockList.Add(block);
+                    }
+                    if (matchedBlockList.Count == 3) break;
+                    if (cnt == 0) break;
+
+                    //1.2 위쪽 왼쪽 방향
+                    for (int i = nCol - 1; i >= 0; i--)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+                        block = m_Blocks[j, i];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+                    if (matchedBlockList.Count == 4)
+                    {
+                        matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                        break;
+                    }
+                    if (cnt == 1) break;
+                    isMunchkin = true;
+                }
+                if (isMunchkin) SetBlockStatusMatched(matchedBlockList, 2, true);
+                else SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, true);
+
+                matchedBlockList.Clear();
                 bFound = true;
+                return bFound;
             }
+            #endregion
 
             matchedBlockList.Clear();
 
             //2. 세로 블럭 검색
             matchedBlockList.Add(baseBlock);
 
+            bool isUP = false;
             //2.1 위쪽 검색
             for (int i = nRow + 1; i < m_nRow; i++)
             {
@@ -354,6 +453,7 @@ namespace InHwan.Board
                 if (!block.IsSafeEqual(baseBlock))
                     break;
 
+                isUP = true;
                 matchedBlockList.Add(block);
             }
 
@@ -364,28 +464,193 @@ namespace InHwan.Board
                 if (!block.IsSafeEqual(baseBlock))
                     break;
 
-                matchedBlockList.Add(block);
+                matchedBlockList.Insert(0, block);
             }
 
+            #region Munchkin 2*n...
+            if (matchedBlockList.Count == 2)
+            {
+                //윗쪽으로 2개 맞다면...
+                if (isUP)
+                {
+                    //1.1 base의 오른쪽  윗쪽방향
+                    for (int i = nRow; i < m_nRow; i++)
+                    {
+                        block = m_Blocks[i, nCol + 1];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Add(block);
+                    }
+                }
+                else
+                {
+                    //1.2 base의 오른쪽 아랫방향
+                    for (int i = nRow ; i >= 0; i--)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+                        block = m_Blocks[i, nCol + 1];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+                }
+                if (matchedBlockList.Count >= 4)
+                {
+                    SetBlockStatusMatched(matchedBlockList, 2, true);
+                    bFound = true;
+                    matchedBlockList.Clear();
+                    return bFound;
+                }
+                if (matchedBlockList.Count >= 3)
+                {
+                    if (isRight) matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                    else matchedBlockList.RemoveAt(0);
+                }
+               
+                if (isUP)
+                {
+                    //1.1 base의 오른쪽  왼쪽방향
+                    for (int i = nRow; i < m_nRow; i++)
+                    {
+                        block = m_Blocks[i, nCol -1];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Add(block);
+                    }
+                }
+                else
+                {
+                    //1.2 base의 오른쪽 아랫방향
+                    for (int i = nRow; i >= 0; i--)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+                        block = m_Blocks[i, nCol - 1];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+                }
+
+                if (matchedBlockList.Count >= 4)
+                {
+                    SetBlockStatusMatched(matchedBlockList, 2, true);
+                    bFound = true;
+                    matchedBlockList.Clear();
+                    return bFound;
+                }
+                if (matchedBlockList.Count >= 3)
+                {
+                    if (isRight) matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                    else matchedBlockList.RemoveAt(0);
+                }
+            }
+            #endregion
+
+            #region Munchkin n*n...
             //2.3 매치된 상태인지 판단한다
             //    기준 블럭(baseBlock)을 제외하고 상하에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
             if (matchedBlockList.Count >= 3)
             {
-                SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, false);
-                bFound = true;
-            }
+                bool isMunchkin = false;
+                for (int j = nCol + 1; j < m_nRow; j++)
+                {
+                    int cnt = 0;
+                    for (int i = nRow; i < m_nRow; i++)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
 
+                        block = m_Blocks[i, j];
+                        if (!block.IsSafeEqual(baseBlock)) break;
+
+                        cnt++;
+                        matchedBlockList.Add(block);
+                    }
+                    if (matchedBlockList.Count == 3) break;
+                    if (cnt == 0) break;
+
+                    //1.2 위쪽 왼쪽 방향
+                    for (int i = nRow - 1; i >= 0; i--)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+                        block = m_Blocks[i, j];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+                    if (matchedBlockList.Count == 4)
+                    {
+                        matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                        break;
+                    }
+                    if (cnt == 1) break;
+                    isMunchkin = true;
+                }
+                if (isMunchkin)
+                {
+                    SetBlockStatusMatched(matchedBlockList, 2, true);
+                    matchedBlockList.Clear();
+                    bFound = true;
+                    return bFound;
+                }
+
+                for (int j = nCol -1; j < m_nRow; j--)
+                {
+                    int cnt = 0;
+                    for (int i = nRow; i < m_nRow; i++)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+
+                        block = m_Blocks[i, j];
+                        if (!block.IsSafeEqual(baseBlock)) break;
+
+                        cnt++;
+                        matchedBlockList.Add(block);
+                    }
+                    if (matchedBlockList.Count == 3) break;
+                    if (cnt == 0) break;
+
+                    //1.2 위쪽 왼쪽 방향
+                    for (int i = nRow - 1; i >= 0; i--)
+                    {
+                        //if (nRow + 1 > m_nRow) break;
+                        block = m_Blocks[i, j];
+                        if (!block.IsSafeEqual(baseBlock))
+                            break;
+
+                        matchedBlockList.Insert(0, block);
+                    }
+                    if (matchedBlockList.Count == 4)
+                    {
+                        matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                        break;
+                    }
+                    if (cnt == 1) break;
+                    isMunchkin = true;
+                }
+                if (isMunchkin) SetBlockStatusMatched(matchedBlockList, 2, true);
+                else SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, true);
+
+                matchedBlockList.Clear();
+                bFound = true;
+                return bFound;
+            }
+            #endregion
             //계산위해 리스트에 저장한 블럭 제거
             matchedBlockList.Clear();
 
             return bFound;
         }
 
-        /*
-         * 리스트에 포함된 전체 블럭의 상태를 MATCH로 변경한다.
-         * @param bHorz 매치된 방향 true이면 세로방향, false이면 가로방향    
-         */
-        void SetBlockStatusMatched(List<Block> blockList, int nMatchCount, bool bHorz)
+            /*
+             * 리스트에 포함된 전체 블럭의 상태를 MATCH로 변경한다.
+             * @param bHorz 매치된 방향 true이면 세로방향, false이면 가로방향    
+             */
+            void SetBlockStatusMatched(List<Block> blockList, int nMatchCount, bool bHorz)
         {
             bool isSpecial = false;
             for(int i = 0; i<blockList.Count; i++)
@@ -396,6 +661,8 @@ namespace InHwan.Board
                     break;
                 }
             }
+            //이동하지 않았다면 스페셜블럭은 마지막블럭이 된다. (스왑을해야만 IsSpecial특성이 true가 됌).
+
             if(isSpecial == false)
             {
                 blockList[blockList.Count - 1].IsSpecial = true;
