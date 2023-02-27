@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using InHwan.Util;
+using InHwan.Scriptable;
 
 namespace InHwan.Stage
 {
@@ -11,11 +13,19 @@ namespace InHwan.Stage
         Stage m_Stage;
         InputManager m_InputManager;
         ActionManager m_ActionManager;
+        
+        StageState stageState; //시작할 스테이지
 
         //Event Members
         bool m_bTouchDown;          //입력상태 처리 플래그, 유효한 블럭을 클릭한 경우 true
         BlockPos m_BlockDownPos;    //블럭 인덱스 (보드에 저장된 위치)
         Vector3 m_ClickPos;         //DOWN 위치(보드 기준 Local 좌표)
+
+        public CntUIConfig m_CntUIConfig;
+        public Text CntMoveText;
+        public Text CntTargetText;
+        public Text CntScoreText;
+        
 
         [SerializeField] Transform m_Container;
         [SerializeField] GameObject m_CellPrefab;
@@ -41,7 +51,7 @@ namespace InHwan.Stage
 
             m_bInit = true;
             m_InputManager = new InputManager(m_Container);
-
+           
             BuildStage();
 
             //m_Stage.PrintAll();
@@ -54,7 +64,12 @@ namespace InHwan.Stage
         void BuildStage()
         {
             //1. Stage를 구성한다.
-            m_Stage = StageBuilder.BuildStage(nStage : 4);
+            //CntUIConfig에 입력된 값에따라 목표 UI설정과 Stage설정
+            CntMoveText.text = "" + m_CntUIConfig.CntMove;
+            CntTargetText.text = "" + m_CntUIConfig.CntTarget;
+            CntScoreText.text = "" + 0;
+
+            m_Stage = StageBuilder.BuildStage(nStage : m_CntUIConfig.CntStage);
             m_ActionManager = new ActionManager(m_Container, m_Stage);
 
             //2. 생성한 stage 정보를 이용하여 씬을 구성한.

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace InHwan.Scriptable
 {
-    [CreateAssetMenu(menuName = "Bingle/Block Config", fileName = "BlockConfig.asset")]
+    [CreateAssetMenu(menuName = "InHwanPuzzle/Block Config", fileName = "BlockConfig.asset")]
     public class BlockConfig : ScriptableObject
     {
         public float[] dropSpeed;

@@ -74,14 +74,14 @@ namespace InHwan.Stage
                     yield return ActionMunChkin(nRow, nCol, swipeDir);
                 }
                 //2. 스와이프 성공한 경우 보드를 평가(매치블럭삭제, 빈블럭 드롭, 새블럭 Spawn 등)한다.
-                else if (bSwipedBlock.value)
+                if (bSwipedBlock.value)
                 {
                     Returnable<bool> bMatchBlock = new Returnable<bool>(false);
                     
                     yield return EvaluateBoard(bMatchBlock, bActionMunchkin);
 
                     //스와이프한 블럭이 매치되지 않은 경우에 원상태 복귀
-                    if (!bMatchBlock.value)
+                    if (!bMatchBlock.value && !bActionMunchkin.value)
                     {
                         yield return m_Stage.CoDoSwipeAction(nRow, nCol, swipeDir, bSwipedBlock, bActionMunchkin);
                     }
@@ -97,6 +97,7 @@ namespace InHwan.Stage
             yield return StartCoroutine(m_Stage.ActionMunChkin(nRow, nCol, swipeDir));
             //먼치킨 블럭으로 해당 줄 삭제후 빈블럭 드롭 후 새 블럭 생성
             yield return StartCoroutine(m_Stage.PostprocessAfterEvaluate());
+            Debug.Log("???");
             yield break;
         }
 
