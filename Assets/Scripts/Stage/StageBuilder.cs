@@ -20,7 +20,7 @@ namespace InHwan.Stage
         /// <returns>생성된 Stage 객체</returns>
         public Stage ComposeStage()
         {
-            Debug.Assert(m_nStage > 0, $"Invalide Stage : {m_nStage}");
+            Debug.Assert(m_nStage > -1, $"Invalide Stage : {m_nStage}");
 
             //0. 스테이지 정보를 로드한다.(보드 크기, Cell/블럭 정보 등)
             m_StageInfo = LoadStage(m_nStage);

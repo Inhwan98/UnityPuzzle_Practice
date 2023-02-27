@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Block
   - 
   - 
   - 
@@ -46,4 +46,7 @@ TagManager:
     locked: 0
   - name: Block
     uniqueID: 1726822053
+    locked: 0
+  - name: UI
+    uniqueID: 3563483219
     locked: 0
