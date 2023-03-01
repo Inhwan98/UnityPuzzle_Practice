@@ -10,6 +10,7 @@ namespace InHwan.Stage
         FIRST = 1,
         SECOND,
     }
+    
     /// <summary>
     /// stage 파일에서 읽어온 정보 (스테이지 구성에 사용) 
     /// Note : 멤버 네이밍은 m_ 붙이지 않는다.

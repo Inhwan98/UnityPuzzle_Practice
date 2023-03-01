@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using InHwan.Board;
 using UnityEngine;
+using InHwan.Scriptable;
 
 namespace InHwan.Board
 {
@@ -9,6 +10,7 @@ namespace InHwan.Board
     {
         Cell m_Cell;
         SpriteRenderer m_SpriteRenderer;
+        [SerializeField] CellConfig m_CellConfig;
 
         // Start is called before the first frame update
         void Start()
@@ -40,6 +42,10 @@ namespace InHwan.Board
             if (m_Cell.type == CellType.EMPTY)
             {
                 m_SpriteRenderer.sprite = null;
+            }
+            if (m_Cell.type == CellType.HOLE)
+            {
+                m_SpriteRenderer.sprite = m_CellConfig.HoleCellSprite;
             }
         }
 
