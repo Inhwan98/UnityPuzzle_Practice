@@ -254,7 +254,7 @@ namespace InHwan.Board
             ///
             /// 2 * 2 기능 추가
             ///
-            if (matchedBlockList.Count == 2)
+           /* if (matchedBlockList.Count == 2)
             {
                 //오른쪽으로 2개 맞다면...
                 if (isRight)
@@ -341,13 +341,14 @@ namespace InHwan.Board
                     if (isRight) matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
                     else matchedBlockList.RemoveAt(0);
                 }
-            }
+            }*/
             #endregion
 
             #region Munchkin n*n...
+            
             //1.3 매치된 상태인지 판단한다
             //    기준 블럭(baseBlock)을 제외하고 좌우에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
-            if (matchedBlockList.Count >= 3)
+            if (matchedBlockList.Count >= 2)
             {
                 //오른쪽으로 2개 맞다면...
                 //1.1 위쪽 오른쪽 방향
@@ -367,8 +368,17 @@ namespace InHwan.Board
                         cnt++;
                         matchedBlockList.Add(block);
                     }
-                    if (matchedBlockList.Count == 3) break;
-                    if (cnt == 0) break;
+                    //2023/3/1
+                    if (matchedBlockList.Count == 3 && cnt == 0) break;
+                    else if (matchedBlockList.Count <= 3 && cnt < 2)
+                    {
+                        if(cnt == 1)
+                        {
+                            matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
+                        }
+                        break;
+                    }
+                    else if (cnt == 0) break;
 
                     //1.2 위쪽 왼쪽 방향
                     for (int i = nCol - 1; i >= 0; i--)
@@ -388,6 +398,7 @@ namespace InHwan.Board
                     if (cnt == 1) break;
                     isMunchkin = true;
                 }
+
                 if (isMunchkin)
                 {
                     SetBlockStatusMatched(matchedBlockList, 2, true);
@@ -410,7 +421,7 @@ namespace InHwan.Board
                         cnt++;
                         matchedBlockList.Add(block);
                     }
-                    if (matchedBlockList.Count == 3) break;
+                    if (matchedBlockList.Count <= 3) break;
                     if (cnt == 0) break;
 
                     //1.2 위쪽 왼쪽 방향
@@ -468,6 +479,7 @@ namespace InHwan.Board
             }
 
             #region Munchkin 2*n...
+            /*
             if (matchedBlockList.Count == 2)
             {
                 //윗쪽으로 2개 맞다면...
@@ -547,13 +559,13 @@ namespace InHwan.Board
                     if (isRight) matchedBlockList.RemoveAt(matchedBlockList.Count - 1);
                     else matchedBlockList.RemoveAt(0);
                 }
-            }
+            }*/
             #endregion
 
             #region Munchkin n*n...
             //2.3 매치된 상태인지 판단한다
             //    기준 블럭(baseBlock)을 제외하고 상하에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
-            if (matchedBlockList.Count >= 3)
+            if (matchedBlockList.Count >= 2)
             {
                 bool isMunchkin = false;
                 for (int j = nCol + 1; j < m_nRow; j++)
@@ -569,7 +581,7 @@ namespace InHwan.Board
                         cnt++;
                         matchedBlockList.Add(block);
                     }
-                    if (matchedBlockList.Count == 3) break;
+                    if (matchedBlockList.Count <= 3) break;
                     if (cnt == 0) break;
 
                     //1.2 위쪽 왼쪽 방향
@@ -611,7 +623,7 @@ namespace InHwan.Board
                         cnt++;
                         matchedBlockList.Add(block);
                     }
-                    if (matchedBlockList.Count == 3) break;
+                    if (matchedBlockList.Count <= 3) break;
                     if (cnt == 0) break;
 
                     //1.2 위쪽 왼쪽 방향
