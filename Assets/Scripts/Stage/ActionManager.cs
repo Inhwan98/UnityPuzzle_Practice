@@ -71,7 +71,7 @@ namespace InHwan.Stage
                 /*Returnable<Block> targetBlock = new Returnable<Block>(m_Stage.blocks[0, 0]);
                 Returnable<Block> bassBlock = new Returnable<Block>(m_Stage.blocks[0, 0]);*/
 
-                yield return m_Stage.CoDoSwipeAction(nRow, nCol, swipeDir, bSwipedBlock, bActionMunchkin);
+                yield return m_Stage.CoDoSwipeAction (nRow, nCol, swipeDir, bSwipedBlock, bActionMunchkin);
 
                 //먼치킨블럭을 이동한다면 true
                 if (bActionMunchkin.value)
