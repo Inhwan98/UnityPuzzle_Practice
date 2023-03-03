@@ -76,19 +76,19 @@ namespace InHwan.Board
         public IEnumerator ActionMunChkin(int nCurentRow, int nCurentCol, Swipe swipeDir)
         {
             Block MunChkinBlock = m_Blocks[nCurentRow, nCurentCol];
-            
+
             m_Blocks[nCurentRow, nCurentCol] = null; //먼치킨 블럭위치 블럭 제거.
             while (true)
             {
                 nCurentRow += swipeDir.GetTargetRow(); //Right : +1, LEFT : -1
                 nCurentCol += swipeDir.GetTargetCol(); //UP : +1, DOWN : -1
-                if(m_Blocks[nCurentRow, nCurentCol] != null)
+                if (m_Blocks[nCurentRow, nCurentCol] != null)
                 {
                     Block block = m_Blocks[nCurentRow, nCurentCol];
-                 
+
                     //2.1 스와이프 대상 블럭(소스, 타겟)과 각 블럭의 이동전 위치를 저장한다.
                     Block targetBlock = m_Blocks[nCurentRow, nCurentCol];
-                   
+
                     //Debug.Assert(MunChkinBlock != null && targetBlock != null);
 
                     Vector3 targetPos = targetBlock.blockObj.transform.position;
@@ -108,7 +108,7 @@ namespace InHwan.Board
                     Vector3 endPos = HoleBlock.cellObj.transform.position;
                     MunChkinBlock.MoveTo(endPos, Constants.SWIPE_DURATION);
                     MunChkinBlock.Destroy();
-                    
+
                     yield return new WaitForSeconds(0.2f);
                     break;
                 }
@@ -123,7 +123,7 @@ namespace InHwan.Board
         {
             //1. 모든 블럭의 매칭 정보(개수, 상태, 내구도)를 계산한 후, 3매치 블럭이 있으면 true 리턴 
             bool bMatchedBlockFound = UpdateAllBlocksMatchedStatus();
-            
+
             //2. 3매칭 블럭 없는 경우 
             if (bMatchedBlockFound == false)
             {
@@ -169,7 +169,7 @@ namespace InHwan.Board
 
                             m_Blocks[nRow, nCol] = null;    //보드에서 블럭 제거 (블럭 객체 제거 X)
                         }
-                       
+
                     }
                 }
             }
@@ -234,32 +234,45 @@ namespace InHwan.Board
             //검사하는 자신을 매칭 리스트에 우선 보관한다.
             matchedBlockList.Add(baseBlock);
 
+            //BassBlock기준 상하좌우 블럭 확인
             block = m_Blocks[nRow, nCol - 1];
             if (block.IsSafeEqual(baseBlock))
+            {
+                matchedBlockList.Insert(0, block);
                 bLeft = true;
+            }
             block = m_Blocks[nRow, nCol + 1];
             if (block.IsSafeEqual(baseBlock))
+            {
+                matchedBlockList.Add(block);
                 bRight = true;
-
+            }
             block = m_Blocks[nRow + 1, nCol];
             if (block.IsSafeEqual(baseBlock))
+            {
+                matchedBlockList.Insert(0, block);
                 bUp = true;
+            }
             block = m_Blocks[nRow - 1, nCol];
             if (block.IsSafeEqual(baseBlock))
-                bDown = true;
-
-            if(bLeft)
             {
-                if(bUp)
+                matchedBlockList.Add(block);
+                bDown = true;
+            }
+
+
+            if (bLeft)
+            {
+                if (bUp)
                 {
                     block = m_Blocks[nRow + 1, nCol - 1];
                     if (block.IsSafeEqual(baseBlock))
                     {
-                        matchedBlockList.Insert(0,block);
+                        matchedBlockList.Insert(0, block);
                         isMunchkin = true;
                     }
                 }
-                if(bDown)
+                if (bDown)
                 {
                     block = m_Blocks[nRow - 1, nCol - 1];
                     if (block.IsSafeEqual(baseBlock))
@@ -270,7 +283,7 @@ namespace InHwan.Board
                 }
             }
 
-            if(bRight)
+            if (bRight)
             {
                 if (bUp)
                 {
@@ -292,7 +305,7 @@ namespace InHwan.Board
                 }
             }
 
-            if(isMunchkin)
+            if (isMunchkin)
             {
                 SetBlockStatusMatched(matchedBlockList, 2, true);
                 bFound = true;
@@ -308,8 +321,6 @@ namespace InHwan.Board
                 block = m_Blocks[nRow, i];
                 if (!block.IsSafeEqual(baseBlock))
                     break;
-
-               
                 matchedBlockList.Add(block);
             }
 
@@ -319,7 +330,6 @@ namespace InHwan.Board
                 block = m_Blocks[nRow, i];
                 if (!block.IsSafeEqual(baseBlock))
                     break;
-
                 matchedBlockList.Insert(0, block);
             }
 
@@ -330,12 +340,10 @@ namespace InHwan.Board
                 SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, true);
                 bFound = true;
             }
-
             matchedBlockList.Clear();
 
             //2. 세로 블럭 검색
             matchedBlockList.Add(baseBlock);
-
             //2.1 위쪽 검색
             for (int i = nRow + 1; i < m_nRow; i++)
             {
@@ -357,27 +365,25 @@ namespace InHwan.Board
             }
 
             //2.3 매치된 상태인지 판단한다
-            //    기준 블럭(baseBlock)을 제외하고 상하에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
+            //기준 블럭(baseBlock)을 제외하고 상하에 2개이상이면 기준블럭 포함해서 3개이상 매치되는 경우로 판단할 수 있다
             if (matchedBlockList.Count >= 3)
             {
                 SetBlockStatusMatched(matchedBlockList, matchedBlockList.Count, false);
                 bFound = true;
             }
-
             //계산위해 리스트에 저장한 블럭 제거
             matchedBlockList.Clear();
 
             return bFound;
         }
-       
-            /*
-             * 리스트에 포함된 전체 블럭의 상태를 MATCH로 변경한다.
-             * @param bHorz 매치된 방향 true이면 세로방향, false이면 가로방향    
-             */
-            void SetBlockStatusMatched(List<Block> blockList, int nMatchCount, bool bHorz)
+        /*
+         * 리스트에 포함된 전체 블럭의 상태를 MATCH로 변경한다.
+         * @param bHorz 매치된 방향 true이면 세로방향, false이면 가로방향    
+         */
+        void SetBlockStatusMatched(List<Block> blockList, int nMatchCount, bool bHorz)
         {
             bool isSpecial = false;
-            for(int i = 0; i<blockList.Count; i++)
+            for (int i = 0; i < blockList.Count; i++)
             {
                 if (blockList[i].IsSpecial == true)
                 {
@@ -387,7 +393,7 @@ namespace InHwan.Board
             }
             //이동하지 않았다면 스페셜블럭은 마지막블럭이 된다. (스왑을해야만 IsSpecial특성이 true가 됌).
 
-            if(isSpecial == false)
+            if (isSpecial == false)
             {
                 blockList[blockList.Count - 1].IsSpecial = true;
             }
